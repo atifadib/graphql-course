@@ -73,12 +73,35 @@ class UpdateUser(Mutation):
             return UpdateUser(user=user)
         
         return None    
+
+"""
+Delete User Mutation
+"""
+class DeleteUser(Mutation):
+    class Arguments:
+        id = Int(required=True)
+
+    user = Field(UserType)
+
+    @staticmethod
+    def mutate(root, info, id):
+        position = None
+        for idx, _ in enumerate(Query.users):
+            if _['id'] == id:
+                position = idx
+                break
+        if position is not None:
+            user = Query.users.pop(idx)
+            return DeleteUser(user=user)
+        return None
+
 """
 Mutation Define how data will be updated or added
 """
 class Mutation(ObjectType):
     create_user = CreateUser.Field()
     update_user = UpdateUser.Field()
+    delete_user = DeleteUser.Field()
 
 
 schema = Schema(query=Query, mutation=Mutation)
@@ -117,10 +140,24 @@ mutation updateUser{
 }
 """
 
+gql4 = """
+mutation deleteUser{
+    deleteUser(id: 1){
+        user{
+            id
+            name
+            age
+        }
+    }
+}
+"""
+
 if __name__ == "__main__":
     output = schema.execute(gql1, root_value='Root-Value-Dummy')
     print(output)
     output = schema.execute(gql2)
     print(output)
     output = schema.execute(gql3)
+    print(output)
+    output = schema.execute(gql4)
     print(output)
