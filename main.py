@@ -117,7 +117,7 @@ query getUsers{
 """
 
 gql2 = """
-mutation createUser{
+mutation {
     createUser(name: "Atif", age: 28){
         user{
             id
@@ -129,7 +129,7 @@ mutation createUser{
 """
 
 gql3 = """
-mutation updateUser{
+mutation {
     updateUser(id: 6, age: 27){
         user{
             id
@@ -141,7 +141,7 @@ mutation updateUser{
 """
 
 gql4 = """
-mutation deleteUser{
+mutation {
     deleteUser(id: 1){
         user{
             id
