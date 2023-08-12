@@ -1,4 +1,6 @@
 from graphene import Schema, ObjectType, String, Int, Field, List, Mutation
+from fastapi import FastAPI
+from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 
 """
 Fields Stored in the User
@@ -152,12 +154,18 @@ mutation {
 }
 """
 
-if __name__ == "__main__":
-    output = schema.execute(gql1, root_value='Root-Value-Dummy')
-    print(output)
-    output = schema.execute(gql2)
-    print(output)
-    output = schema.execute(gql3)
-    print(output)
-    output = schema.execute(gql4)
-    print(output)
+app = FastAPI()
+app.mount("/graphql", GraphQLApp(
+    schema=schema,
+    on_get=make_graphiql_handler()
+))
+
+# if __name__ == "__main__":
+#     output = schema.execute(gql1, root_value='Root-Value-Dummy')
+#     print(output)
+#     output = schema.execute(gql2)
+#     print(output)
+#     output = schema.execute(gql3)
+#     print(output)
+#     output = schema.execute(gql4)
+#     print(output)
