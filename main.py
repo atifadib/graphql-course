@@ -1,6 +1,58 @@
 from graphene import Schema, ObjectType, String, Int, Field, List, Mutation
 from fastapi import FastAPI
 from starlette_graphene3 import GraphQLApp, make_graphiql_handler
+from sqlalchemy import create_engine
+from sqlalchemy import Column, Integer, String as StringSQL, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker
+
+DB_URL = """postgresql://postgres:9bm2vSQqfXDreRo4QAMu@containers-us-west-104.railway.app:6194/railway"""
+engine = create_engine(DB_URL)
+
+Base = declarative_base()
+Session = sessionmaker(bind=engine)
+session_obj = Session()
+
+class Employer(Base):
+    __tablename__ =  "employers"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(StringSQL)
+    contact_email = Column(StringSQL)
+    industry = Column(StringSQL)
+    jobs = relationship("Job", back_populates="employer")
+
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id = Column(Integer, primary_key=True)
+    title = Column(StringSQL)
+    description = Column(StringSQL)
+    employer_id = Column(Integer, ForeignKey("employers.id"))
+    employer = relationship("Employer", back_populates='jobs')
+
+Base.metadata.create_all(engine)
+
+# Code Block for Adding data --> Do not uncommit
+# emp = Employer(id=1, 
+#          name='Meta', 
+#          contact_email='peeps@meta.com', 
+#          industry='Social Media')
+# session_obj.add(emp)
+# emp = Employer(id=2, 
+#          name='Google', 
+#          contact_email='people@google.com', 
+#          industry='Internet')
+# session_obj.add(emp)
+
+# job = Job(id=1, title='Data Scientist', description="XYZ blah",
+#            employer_id=1)
+# session_obj.add(job)
+# job = Job(id=2, title='SWE', description="XYZ blah",
+#            employer_id=2)
+# session_obj.add(job)
+
+# session_obj.commit()
 
 """
 Fields Stored in the User
